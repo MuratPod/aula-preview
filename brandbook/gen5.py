@@ -1,80 +1,72 @@
-import json,pathlib,re
+import json,pathlib
 from gen4 import ic,page
 T=json.load(open('tokens/_t.json'));C=json.load(open('tokens/contrast.json'))
-# ---------- web header/hero/footer
-def site(mobile):
-  W=390 if mobile else 1280
-  nav='' if mobile else '<nav style="display:flex;gap:28px;font-weight:800">'+''.join(f'<a>{x}</a>' for x in ['Oposiciones','Cómo funciona','Simulacros','Preguntas'])+'</nav>'
-  verts=''.join(f'<span class="badge" style="background:{T["vertical"][k]["light"]};color:#fff;font-size:14px;padding:6px 12px">{n}</span>' for k,n in [('museos','Museos'),('justicia','Justicia'),('policia','Policía'),('educacion','Educación')])
-  hero_img='' if mobile else '<img src="../screens/home.png" style="width:300px;border-radius:36px;border:8px solid #0B1530;box-shadow:0 30px 60px rgba(0,0,0,.35);transform:rotate(3deg)">'
-  pad='20px' if mobile else '64px'
-  return page(f'''<header style="display:flex;justify-content:space-between;align-items:center;padding:18px {pad};background:var(--bg)"><img src="../logo/aula-umbrella-horizontal.svg" height="{34 if mobile else 40}" alt="aula!">{nav}<a class="btn btn-primary" style="padding:{'10px 16px;font-size:15px' if mobile else '12px 20px'}">{'Empieza' if mobile else 'Empieza gratis'}</a></header>
-<section class="navy" style="padding:{'36px 20px 40px' if mobile else '72px 64px'};display:flex;gap:48px;align-items:center;justify-content:space-between">
-<div style="max-width:600px"><span class="streak" style="margin-bottom:18px">{ic('flame',18)} Un poco cada día</span>
-<h1 style="font-size:{40 if mobile else 64}px;color:#fff;margin:16px 0 12px">Estudia como<br>se <span style="color:var(--gold)">examina</span><span style="color:#FF7A85">!</span></h1>
-<p style="font-size:{17 if mobile else 20}px;color:#C9D2E8;font-weight:600;margin:0 0 20px"><b style="color:#fff">Nuestra misión:</b> que prepares tu oposición con constancia y sin agobios, con lecciones cortas, simulacros con el formato real y explicaciones que citan su fuente.</p>
-<div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-primary big" style="{'width:100%' if mobile else ''}">Empieza gratis</a><a class="btn btn-gold" style="{'width:100%' if mobile else ''}">Ver cómo funciona</a></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:22px">{verts}</div></div>{hero_img}</section>
-<section style="padding:{'32px 20px' if mobile else '56px 64px'};display:grid;grid-template-columns:{'1fr' if mobile else 'repeat(3,1fr)'};gap:20px">
-{''.join(f'<div class="card"><img src="../illustrations/{i}.svg" width="72" alt=""><h3>{t}</h3><p class="muted" style="margin:0;font-weight:600">{d}</p></div>' for i,t,d in [('racha','Lecciones de 5 minutos','Una meta diaria a tu medida y tu racha para no perder el ritmo.'),('simulacro','Simulacros reales','Mismo número de preguntas, tiempo y penalización que el examen.'),('temario','Todo el temario','Por bloques y temas, con tus errores siempre a mano.')])}</section>
-<footer style="background:var(--navy-900);color:#A9B4D0;padding:{'28px 20px' if mobile else '40px 64px'};display:flex;flex-direction:{'column' if mobile else 'row'};gap:18px;justify-content:space-between;align-items:{'flex-start' if mobile else 'center'}">
-<img src="../logo/aula-umbrella-on-dark.svg" height="36" alt="aula!"><span style="font-weight:700;font-size:14px"><a style="color:#F3F5FB">Aviso legal</a> · <a style="color:#F3F5FB">Privacidad</a> · <a style="color:#F3F5FB">Cookies</a><br>Aula es una herramienta independiente, no afiliada a ningún ministerio ni organismo público.</span><span style="font-size:13px">© 2026 Aula</span></footer>''',w=W,h=800)
-pathlib.Path('web').mkdir(exist_ok=True)
+VN=[('museos','Museos'),('justicia','Justicia'),('policia','Policía'),('educacion','Educación')]
+FOOT='Aviso legal · Privacidad · no afiliada al Ministerio de Cultura'
+def site(m):
+  pad='20px' if m else '72px'
+  nav='' if m else '<nav style="display:flex;gap:32px;font-size:15px">'+''.join(f'<a style="text-decoration:none">{x}</a>' for x in ['Oposiciones','Método','Simulacros','Preguntas'])+'</nav>'
+  verts=''.join(f'<span class="vtag" style="margin-right:16px" data-vertical="{k}"><span class="marker"></span>{n}</span>' for k,n in VN)
+  img='' if m else '<img src="../screens/explanation.png" style="width:300px;border-radius:32px;border:1px solid var(--line);box-shadow:0 24px 60px rgba(20,33,61,.16)">'
+  feats=[('book','Todo el temario','Por bloques y temas, con tus errores siempre a mano.'),('timer','Simulacros reales','Mismo número de preguntas, tiempo y penalización que el examen.'),('source','Explicado con la norma','Cada respuesta cita su fuente. Si no la hay, lo decimos: «Sin fuente».')]
+  return page(f'''<header style="display:flex;justify-content:space-between;align-items:center;padding:20px {pad};border-bottom:1px solid var(--line)"><img src="../logo/aula-umbrella-horizontal.svg" height="{30 if m else 36}" alt="Aula.">{nav}<a class="btn btn-primary" style="{'padding:10px 14px;font-size:15px' if m else ''}">{'Empezar' if m else 'Empezar gratis'}</a></header>
+<section style="padding:{'40px 20px' if m else '80px 72px'};display:flex;gap:56px;align-items:center;justify-content:space-between">
+<div style="max-width:620px"><p class="eyebrow">Oposiciones · Preparación con método</p>
+<h1 style="font-size:{44 if m else 72}px;line-height:1.04;margin:14px 0 18px">Menos ruido<span class="dot">.</span><br>Más temario<span class="dot">.</span></h1>
+<p style="font-size:{17 if m else 20}px;color:var(--muted);margin:0 0 26px">Lecciones cortas, simulacros con el formato real y explicaciones que citan la norma. Estudia con método, no con suerte.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-primary big" style="{'width:100%' if m else ''}">Empezar gratis</a><a class="btn btn-ghost big" style="{'width:100%' if m else ''}">Ver cómo funciona</a></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px 0;margin-top:28px">{verts}</div></div>{img}</section>
+<section style="padding:{'8px 20px 40px' if m else '0 72px 72px'};display:grid;grid-template-columns:{'1fr' if m else 'repeat(3,1fr)'};gap:20px">
+{''.join(f'<div style="border-top:2px solid var(--ink);padding-top:18px">{ic(i,24)}<h3 class="serif" style="font-size:22px;margin:12px 0 6px;font-weight:600">{t}</h3><p class="muted" style="margin:0">{d}</p></div>' for i,t,d in feats)}</section>
+<footer style="background:var(--navy);color:#F4F1EA;padding:{'32px 20px' if m else '48px 72px'}"><div style="display:flex;justify-content:space-between;align-items:{'flex-start' if m else 'center'};flex-direction:{'column' if m else 'row'};gap:20px"><img src="../logo/aula-umbrella-on-dark.svg" height="32" alt="Aula."><span style="font-size:14px;color:#B9BCC8">{FOOT}</span></div>
+<p style="font-size:13px;color:#B9BCC8;margin:20px 0 0">© 2026 Aula · aulaoposiciones.es · hola@aulaoposiciones.es</p></footer>''',w=390 if m else 1280,h=844 if m else 800)
 open('web/site-desktop.html','w').write(site(False));open('web/site-mobile.html','w').write(site(True))
-# ---------- templates
-def tpl(name,w,h,body):
-  open(f'templates/{name}.html','w').write(page(body,w=w,h=h).replace('body{width','body{margin:0;width'))
-tpl('instagram-post',1080,1080,f'''<div class="navy" style="width:1080px;height:1080px;padding:90px;display:flex;flex-direction:column;justify-content:space-between">
-<img src="../logo/aula-umbrella-on-dark.svg" height="70" style="align-self:flex-start"><div><span class="streak" style="font-size:34px;padding:12px 26px">{ic('flame',38)} 30 días</span>
-<h1 style="font-size:104px;color:#fff;margin:36px 0 0;line-height:1.02">Un mes seguido<br>estudiando.<br><span style="color:var(--gold)">Eso es método.</span></h1></div>
-<p style="font-size:34px;color:#C9D2E8;font-weight:700;margin:0">Estudia como se examina · aulaoposiciones.es</p></div>''')
-tpl('instagram-story',1080,1920,f'''<div style="width:1080px;height:1920px;background:var(--bg);padding:110px 90px;display:flex;flex-direction:column;gap:50px">
-<img src="../logo/aula-umbrella-horizontal.svg" height="80" style="align-self:flex-start"><h1 style="font-size:110px;line-height:1.02;margin:40px 0 0">¿Te atreves con<br>un <span style="color:var(--coral-700)">simulacro</span><br>de verdad?</h1>
-<p style="font-size:42px;font-weight:700;color:var(--muted);margin:0">100 + 10 preguntas · 100 minutos<br>Puntuación: +1 / 0 / −1/3</p>
-<img src="../screens/result.png" style="width:640px;align-self:center;border-radius:60px;border:14px solid #0B1530;box-shadow:0 40px 80px rgba(0,0,0,.25)">
-<a class="btn btn-primary big" style="font-size:44px;padding:36px;margin-top:auto">Empieza gratis</a></div>''')
-tpl('og-image',1200,630,f'''<div class="navy" style="width:1200px;height:630px;padding:70px;display:flex;justify-content:space-between;align-items:center">
-<div><img src="../logo/aula-umbrella-on-dark.svg" height="64"><h1 style="font-size:84px;color:#fff;margin:40px 0 16px;line-height:1.02">Estudia como<br>se <span style="color:var(--gold)">examina</span><span style="color:#FF7A85">!</span></h1><p style="font-size:28px;color:#C9D2E8;font-weight:700;margin:0">Oposiciones · lecciones diarias · simulacros reales</p><p style="font-size:24px;color:var(--gold);font-weight:800;margin:10px 0 0">aulaoposiciones.es</p></div>
-<img src="../illustrations/racha.svg" width="300"></div>''')
-frames=[('Un poco cada día.<br>Tu racha te espera.','home'),('Explicaciones al instante,<br>con su fuente.','explanation'),('Simulacros con el<br>formato real.','simulacro'),('Tu nota 0–30,<br>sin cajas negras.','result')]
-for i,(t,s) in enumerate(frames,1):
-  bg='navy' if i%2 else ''
-  tpl(f'appstore-6.7-{i}',430,932,f'''<div class="{bg}" style="width:430px;height:932px;{'' if bg else 'background:var(--bg);'}padding:48px 28px 0;text-align:center;overflow:hidden">
-<h1 style="font-size:31px;line-height:1.12;{'color:#fff' if bg else ''}">{t}</h1><img src="../screens/{s}.png" style="width:330px;margin-top:26px;border-radius:44px;border:10px solid #0B1530;box-shadow:0 30px 60px rgba(0,0,0,.3)"></div>''')
-open('templates/email-signature.html','w').write('''<!-- Firma de email aula! · pegar en el cliente de correo (tablas + estilos inline).
-     Nota: el dominio aulaoposiciones.es aún no está activo; la imagen debe alojarse allí antes de usar la firma. -->
-<table cellpadding="0" cellspacing="0" role="presentation" style="font-family:Nunito,Arial,sans-serif;color:#1B2140;font-size:14px;line-height:1.4">
-<tr><td style="padding-right:14px;border-right:3px solid #FF4250"><img src="https://aulaoposiciones.es/brand/favicon-96.png" width="48" height="48" alt="aula!" style="border-radius:13px;display:block"></td>
-<td style="padding-left:14px"><b style="font-size:16px">Equipo Aula</b><br>
-<a href="mailto:hola@aulaoposiciones.es" style="color:#2449D8;text-decoration:none;font-weight:700">hola@aulaoposiciones.es</a> · <a href="https://aulaoposiciones.es" style="color:#2449D8;text-decoration:none;font-weight:700">aulaoposiciones.es</a><br>
-<span style="color:#C8162B;font-weight:800">Estudia como se examina.</span></td></tr></table>''')
-open('templates/email-signature-preview.html','w').write(page('<div style="padding:24px 30px;background:#fff;height:120px">'+open('templates/email-signature.html').read()+'</div>',w=520,h=120).replace('https://aulaoposiciones.es/brand/favicon-96.png','../favicon/favicon-96.png'))
-# ---------- UI kit
-V=T['vertical']
-kit=f'''<div style="padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:28px">
-<div class="card"><h3>Botones</h3><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-primary big">Empezar</a><a class="btn btn-primary">Comprobar</a><a class="btn btn-blue">Continuar</a><a class="btn btn-ghost">Saltar</a><a class="btn btn-navy">Entregar</a><a class="btn btn-gold">Ver racha</a><button class="btn" disabled>Desactivado</button></div></div>
-<div class="card"><h3>Campos</h3><label class="label">Correo electrónico</label><input class="input" value="lucia@correo.es"><div style="height:10px"></div><input class="input" placeholder="Busca un tema"><div style="height:10px"></div><input class="input err" value="lucia@"><small style="color:var(--error);font-weight:800">Revisa el correo: falta el dominio.</small></div>
-<div class="card"><h3>Opciones de respuesta</h3><button class="opt"><span class="k">A</span>Por defecto</button><button class="opt sel"><span class="k">B</span>Seleccionada</button><button class="opt ok"><span class="k">C</span>Correcta<span class="tag">Correcta</span></button><button class="opt bad"><span class="k">D</span>Incorrecta<span class="tag">Tu respuesta</span></button></div>
-<div class="card"><h3>Progreso, racha, XP</h3><div class="progress"><i style="width:40%"></i></div><div style="height:10px"></div><div class="progress gold"><i style="width:75%"></i></div><div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><span class="streak">{ic('flame',18)} 12</span><span class="xp">{ic('star',16)} +10 XP</span><span class="xp">{ic('star',16)} 340 XP</span><span class="chip on">Regular · 50 XP</span><span class="chip">Ligera · 30</span><span class="chip">Intensa · 80</span></div>
-<div style="margin-top:16px"><img src="../illustrations/racha.svg" width="56" style="vertical-align:middle"> <b>Día de descanso automático:</b> <span class="muted">uno por semana, sin perder la racha.</span></div></div>
-<div class="card"><h3>Etiqueta IA y fuente</h3><span class="badge ai">{ic('sparkle',13)} Contenido generado por IA</span><div class="src" style="margin:8px 0 16px">{ic('source',14)} Fuente: <a>Ley 16/1985, art. 59.3</a></div><span class="badge ai">{ic('sparkle',13)} Contenido generado por IA</span> <span class="badge nosrc">Sin fuente</span><p class="muted" style="font-size:13px;margin:8px 0 0">Sin fuente: aviso ámbar, nunca se oculta.</p></div>
-<div class="card"><h3>Badges de vertical y tarjetas</h3><div style="display:flex;gap:8px;flex-wrap:wrap">{''.join(f'<span class="badge" style="background:{V[k]["light"]};color:#fff">{ic(i,13)} {n}</span>' for k,n,i in [('museos','Museos','museum'),('justicia','Justicia','scale'),('policia','Policía','shield'),('educacion','Educación','school')])}</div>
-<div class="card" style="border-left:6px solid {V["justicia"]["light"]};margin-top:14px;padding:14px"><b>Tarjeta con línea de vertical</b><br><span class="muted">Línea izquierda 6px = color de la vertical.</span></div></div>
-<div class="card"><h3>Toasts</h3><div class="toast ok" style="margin-bottom:8px">{ic('check',20)} ¡Correcta! +10 XP</div><div class="toast bad" style="margin-bottom:8px">{ic('x',20)} Casi. Mira la explicación.</div><div class="toast info">{ic('flame',20)} ¡Racha de 12 días! Sigue así.</div></div>
-<div class="card" style="padding:0;overflow:hidden"><h3 style="padding:20px 20px 0">Barra de pestañas</h3><nav class="tabbar">{''.join(f'<span class="tab{" on" if k=="Hoy" else ""}">{ic(i,24)}{k}</span>' for k,i in [('Hoy','home'),('Temario','book'),('Simulacro','timer'),('Errores','refresh'),('Perfil','user')])}</nav></div>
-</div>'''
-pathlib.Path('ui').mkdir(exist_ok=True)
-open('ui/ui-kit.html','w').write(page(kit,w=1280,h=900))
-open('ui/ui-kit-dark.html','w').write(page(kit,w=1280,h=900,theme='dark'))
-# ---------- coral vs reference
-cv=C['coral_vs_reference']
-sw=f'''<div style="padding:40px;width:1000px"><h2 style="font-size:28px">Coral final vs. referencia competidor</h2><div style="display:flex;gap:24px;margin:20px 0">
-<div style="flex:1"><div style="height:220px;border-radius:24px;background:#FF4250"></div><h3 style="margin-top:12px">aula! coral · #FF4250</h3><p class="muted" style="font-weight:700;margin:0">Tono {cv["hue_final"]}° · texto: #C8162B</p></div>
-<div style="flex:1"><div style="height:220px;border-radius:24px;background:#EF7746"></div><h3 style="margin-top:12px">Referencia competidor · #EF7746</h3><p class="muted" style="font-weight:700;margin:0">Tono {cv["hue_ref"]}°</p></div></div>
-<div class="card"><b>Diferencia de tono: {cv["hue_diff"]}° · ΔE2000 = {cv["dE2000"]}</b> <span class="muted">(el coral anterior #FF6B3D estaba a ΔE {cv["dE2000_old_FF6B3D"]}, casi idéntico). ΔE &gt; 10 = claramente distinto a simple vista.</span></div></div>'''
-open('ui/coral-vs-reference.html','w').write(page(sw,w=1080,h=520))
-# ---------- logo sheet
+# UI kit
+def kit(theme):
+  sw=lambda n,v,fg: f'<div><div style="height:56px;border-radius:8px;background:{v};border:1px solid var(--line)"></div><small class="mono subtle" style="font-size:11px">{n}<br>{v}</small></div>'
+  P=T['dark'] if theme=='dark' else {**T['brand'],**T['neutral'],**T['semantic']}
+  keys=['bg','surface','surface-2','line','ink','muted','subtle','gold','success','error','warning','ai'] if theme=='dark' else ['paper','surface','surface-2','line','navy','muted','subtle','gold','gold-700','success','error','ai']
+  return page(f'''<div style="padding:40px 48px"><div style="display:flex;justify-content:space-between;align-items:center"><img src="../logo/aula-umbrella-{'on-dark' if theme=='dark' else 'horizontal'}.svg" height="34"><span class="eyebrow">UI kit · {'oscuro' if theme=='dark' else 'claro'} · D Editorial</span></div>
+<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:10px;margin:28px 0">{''.join(sw(k,P[k],0) for k in keys)}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+<div><p class="eyebrow">Botones</p><div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start"><a class="btn btn-primary">Empezar lección</a><a class="btn btn-ghost">Ver temario</a><a class="btn btn-gold">Ver simulacro</a><a class="btn btn-link">Repasar errores</a><a class="btn btn-primary" disabled>Comprobar</a></div>
+<p class="eyebrow" style="margin-top:22px">Formulario</p><input class="input" value="lucia@correo.es"><div style="height:10px"></div><input class="input focus" value="Tema 18"><div style="display:flex;gap:12px;align-items:center;margin-top:12px"><span class="toggle on"></span> Recordatorio diario <span class="toggle"></span> Sonido</div></div>
+<div><p class="eyebrow">Respuestas</p><button class="opt"><span class="k">A</span>Ley 39/2015</button><button class="opt sel"><span class="k">B</span>Ley 16/1985</button><button class="opt ok"><span class="k">B</span>Ley 16/1985<span class="tag">Correcta</span></button><button class="opt bad"><span class="k">A</span>Ley 39/2015<span class="tag">Tu respuesta</span></button>
+<p class="eyebrow" style="margin-top:16px">Badges y motivación</p><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge ai">{ic('sparkle',12)} Contenido generado por IA</span><span class="badge warn">Sin fuente</span><span class="badge ok">Dominado</span><span class="badge bad">A repasar</span><span class="streak">{ic('flame',16)} 12 días</span><span class="xp">{ic('star',14)} 340 XP</span></div></div>
+<div><p class="eyebrow">Tarjeta y vertical</p><div class="card"><span class="vtag"><span class="marker"></span>Museos · Tema 18</span><h2 style="font-size:22px;margin:10px 0 4px">Funciones del museo</h2><p class="subtle" style="font-size:14px">10 preguntas · ~6 min</p><div class="progress gold"><i style="width:64%"></i></div></div>
+<div style="display:flex;gap:16px;margin:14px 0;flex-wrap:wrap">{''.join(f'<span class="vtag" data-vertical="{k}"><span class="marker"></span>{n}</span>' for k,n in VN)}</div>
+<div class="toast ok">{ic('check',18)} Guardado en tus errores.</div><div style="height:8px"></div><div class="toast bad">{ic('x',18)} Sin conexión. Lo reintentamos.</div><div style="height:8px"></div><div class="toast warn">{ic('flag',18)} Quedan 5 minutos.</div></div></div>
+<p class="eyebrow" style="margin-top:26px">Tipografía</p><div style="display:flex;gap:36px;align-items:baseline;flex-wrap:wrap"><span class="serif" style="font-size:48px">Display 48</span><span class="serif" style="font-size:34px">H1 34</span><span class="serif" style="font-size:26px">H2 26</span><span style="font:600 19px var(--font-sans)">H3 19 Plex</span><span>Body 16 Plex</span><span class="mono" style="font-size:14px">D = 68 − 21 ÷ 3</span></div>
+<p class="eyebrow" style="margin-top:22px">Iconos · 24 px · trazo 1,5</p><div style="display:flex;gap:18px;flex-wrap:wrap">{''.join(ic(k,24) for k in json.load(open('icons/_list.json')))}</div></div>''',w=1280,h=900,theme=theme)
+open('ui/ui-kit.html','w').write(kit('light'));open('ui/ui-kit-dark.html','w').write(kit('dark'))
+# logo sheet
 L=json.load(open('logo/_list.json'))
-ls='<div style="padding:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:1280px">'+''.join(f'<div class="card" style="padding:14px;{"background:#0B1530" if "dark" in n else ""}"><img src="../logo/{n}.svg" style="max-width:100%;height:56px"><br><small class="muted">{n}</small></div>' for n in L if 'symbol' not in n)+'</div><div style="padding:0 30px 30px;display:flex;gap:12px;flex-wrap:wrap">'+''.join(f'<img src="../logo/{n}.svg" height="64">' for n in L if 'symbol' in n)+'</div>'
-open('ui/logo-sheet.html','w').write(page(ls,w=1280,h=800))
+mis=''.join(f'<figure style="margin:0" class="card"><img src="../logo/aula-umbrella-horizontal.svg" style="height:40px;{s}"><figcaption class="subtle" style="font-size:12px;margin-top:8px">✕ {t}</figcaption></figure>' for s,t in [('transform:scaleX(1.4);transform-origin:left','No deformar'),('filter:hue-rotate(160deg) saturate(3)','No cambiar colores'),('transform:rotate(-10deg)','No girar'),('background:repeating-linear-gradient(45deg,#D9A21B 0 6px,#fff 6px 12px)','No sobre fondos ruidosos'),('opacity:.35','No bajar opacidad'),('filter:drop-shadow(3px 3px 0 #000)','No añadir sombras')])
+cell=lambda n,dk=False,h=48:f'<figure style="margin:0;padding:18px;border-radius:12px;background:{"#14213D" if dk else "#fff"};border:1px solid var(--line)"><img src="../logo/{n}.svg" style="height:{h}px;max-width:100%"><figcaption class="mono" style="font-size:10px;color:{"#B9BCC8" if dk else "#66697F"};margin-top:6px">{n}</figcaption></figure>'
+open('ui/logo-sheet.html','w').write(page(f'''<div style="padding:36px 48px"><p class="eyebrow">Logotipo · «Aula.» — el punto significa «resuelto»</p>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:14px;margin:14px 0">{cell('aula-umbrella-horizontal',h=64)}{cell('aula-stacked-light',h=110)}{cell('aula-mark-light',h=80)}{cell('aula-stacked-dark',True,110)}</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">{''.join(cell(f'aula-{k}-horizontal',h=40) for k,_ in VN)}{''.join(cell(f'aula-{k}-on-dark',True,40) for k,_ in VN)}</div>
+<div style="display:grid;grid-template-columns:1.3fr 2fr;gap:14px;margin-top:14px">{cell('aula-clearspace',h=150)}<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">{mis}</div></div></div>''',w=1280,h=800))
+# competitor check
+comp=C['competitors'];alt=C['navy_alternative']
+rows=''.join(f'<tr><td><span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:{c["hex"]};vertical-align:middle"></span> {c["ours"]} <span class="mono">{c["hex"]}</span></td><td><span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:{c["refhex"]};vertical-align:middle"></span> {c["ref"]} <span class="mono">{c["refhex"]}</span></td><td class="mono"><b>{c["dE2000"]}</b> {"✓" if c["dE2000"]>=10 else "⚠ &lt;10"}</td></tr>' for c in comp)
+open('ui/competitor-check.html','w').write(page(f'''<div style="padding:32px 40px"><p class="eyebrow">Distancia de color vs competencia · ΔE2000 (objetivo ≥ 10)</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:10px">{rows}</table>
+<p class="toast warn" style="margin-top:14px">navy #14213D queda a ΔE {[c for c in comp if c["ref"]=="MAD navy"][0]["dE2000"]} del navy de MAD #11184A. La diferenciación la llevan el papel #F4F1EA, Fraunces y el oro. Alternativa propuesta: tinta #142A3D (ΔE {alt["vs_MAD"]} vs MAD, {alt["vs_OT"]} vs OpositaTest, contraste {alt["on_paper"]}:1 sobre papel).</p></div>''',w=1080,h=520,extra='td{padding:7px 8px;border-bottom:1px solid var(--line)}'))
+# templates
+def tpl(body,w,h,dark=False): return page(body,w=w,h=h,theme='dark' if dark else 'light',extra=f'body{{height:{h}px}}')
+open('templates/instagram-post.html','w').write(tpl(f'''<div style="padding:90px;height:1080px;display:flex;flex-direction:column;justify-content:space-between"><span class="vtag" style="font-size:26px;gap:14px"><span class="marker" style="width:20px;height:20px;border-radius:4px"></span>Museos · Pregunta del día</span>
+<h1 style="font-size:84px;line-height:1.06">¿Qué ley regula el Patrimonio Histórico Español<span class="dot">?</span></h1>
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><p class="muted" style="font-size:30px;margin:0">Respuesta y fuente en la app.</p><img src="../logo/aula-umbrella-horizontal.svg" height="64"></div></div>''',1080,1080))
+open('templates/instagram-story.html','w').write(tpl(f'''<div style="padding:120px 90px;height:1920px;display:flex;flex-direction:column;justify-content:space-between;background:#14213D;color:#F4F1EA"><img src="../logo/aula-umbrella-on-dark.svg" height="70" style="align-self:flex-start">
+<div><p class="eyebrow" style="font-size:26px;color:#B9BCC8">Estudia con método</p><h1 style="font-size:132px;line-height:1.02;color:#F4F1EA">Menos ruido<span class="dot">.</span><br>Más temario<span class="dot">.</span></h1>
+<p style="font-size:38px;color:#B9BCC8;margin-top:30px">Cada respuesta, explicada con la norma.</p></div>
+<div style="display:flex;gap:30px;flex-wrap:wrap">{''.join(f'<span class="vtag" data-theme="dark" data-vertical="{k}" style="font-size:30px;color:#F4F1EA;gap:14px"><span class="marker" style="width:18px;height:18px;border-radius:4px"></span>{n}</span>' for k,n in VN)}</div></div>''',1080,1920))
+open('templates/og-image.html','w').write(tpl(f'''<div style="padding:72px;height:630px;display:flex;flex-direction:column;justify-content:space-between"><img src="../logo/aula-umbrella-horizontal.svg" height="56" style="align-self:flex-start"><h1 style="font-size:88px;line-height:1.02">Menos ruido<span class="dot">.</span> Más temario<span class="dot">.</span></h1><p class="muted" style="font-size:26px;margin:0">aulaoposiciones.es · Oposiciones con método</p></div>''',1200,630))
+sig='<table cellpadding="0" cellspacing="0" style="font-family:\'IBM Plex Sans\',Arial,sans-serif;color:#14213D"><tr><td style="padding-right:16px;border-right:2px solid #D9A21B"><img src="https://aulaoposiciones.es/email/aula-mark.png" width="48" height="48" alt="Aula."></td><td style="padding-left:16px"><b style="font-family:Fraunces,Georgia,serif;font-size:17px;font-weight:600">Equipo Aula</b><br><span style="font-size:13px;color:#4A5068">hola@aulaoposiciones.es · aulaoposiciones.es</span><br><span style="font-size:12px;color:#66697F">Menos ruido. Más temario.</span></td></tr></table>'
+open('templates/email-signature.html','w').write(sig)
+open('templates/email-signature-preview.html','w').write(page('<div style="padding:24px">'+sig.replace('https://aulaoposiciones.es/email/aula-mark.png','../logo/png/aula-mark-light.png')+'</div>',w=520,h=140))
+AS=[('Menos ruido.<br>Más temario.','home'),('Cada respuesta,<br>explicada con la norma.','explanation'),('Simulacros con<br>el formato real.','simulacro'),('Tu nota,<br>calculada como en el examen.','result')]
+for i,(t,s) in enumerate(AS,1):
+  open(f'templates/appstore-6.7-{i}.html','w').write(tpl(f'''<div style="padding:56px 30px 0;height:932px;text-align:center;{'background:#14213D;color:#F4F1EA' if i%2==0 else ''}"><h1 style="font-size:34px;line-height:1.12;{'color:#F4F1EA' if i%2==0 else ''}">{t}</h1><img src="../screens/{s}.png" style="width:330px;border-radius:40px;margin-top:28px;border:8px solid {'#22304B' if i%2==0 else '#fff'};box-shadow:0 20px 50px rgba(20,33,61,.18)"></div>''',430,932))
 print('ok')

@@ -1,1 +1,0 @@
-ETA (31.10.2026 18:47 CET): ~60–90 min para el paquete completo generado por script (logos, iconos, UI kit, pantallas, plantillas, tokens, página índice), luego espejo en polina-design + draft PR.

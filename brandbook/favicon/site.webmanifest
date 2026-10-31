@@ -1,6 +1,6 @@
 {
- "name": "aula!",
- "short_name": "aula!",
+ "name": "Aula.",
+ "short_name": "Aula.",
  "icons": [
   {
    "src": "favicon-192.png",
@@ -13,7 +13,7 @@
    "type": "image/png"
   }
  ],
- "theme_color": "#FF4250",
- "background_color": "#FFF8EC",
+ "theme_color": "#14213D",
+ "background_color": "#F4F1EA",
  "display": "standalone"
 }

@@ -1,35 +1,29 @@
 :root{
-  --coral:#FF4250;
-  --coral-700:#C8162B;
-  --coral-100:#FFE3E5;
-  --blue:#2E5BFF;
-  --blue-700:#2449D8;
-  --blue-100:#E3E9FF;
-  --navy-900:#0B1530;
-  --navy-800:#142350;
-  --navy-700:#1C2E63;
-  --gold:#F2C14E;
-  --gold-700:#7A4F00;
-  --gold-100:#FCEFC9;
-  --amber:#FFB020;
-  --bg:#FFF8EC;
+  --navy:#14213D;
+  --navy-800:#1E2D4F;
+  --navy-600:#3A4A6B;
+  --gold:#D9A21B;
+  --gold-700:#856000;
+  --gold-100:#F6EBCB;
+  --paper:#F4F1EA;
+  --bg:#F4F1EA;
   --surface:#FFFFFF;
-  --surface-2:#FBF1DF;
-  --line:#EADFCB;
-  --ink:#1B2140;
-  --muted:#5A5F78;
-  --subtle:#6A6E84;
+  --surface-2:#EFEBE3;
+  --line:#DCD5C6;
+  --ink:#14213D;
+  --muted:#4A5068;
+  --subtle:#66697F;
   --success:#0E7A6E;
-  --success-100:#DDF2EE;
+  --success-100:#E6F5F2;
   --error:#B42318;
-  --error-100:#FDE4E1;
-  --warning:#A15C00;
-  --warning-100:#FFF0D1;
+  --error-100:#FBE6E3;
+  --warning:#8F5300;
+  --warning-100:#FBEFD9;
   --ai:#5B3FC4;
-  --ai-100:#ECE7FF;
-  --r-sm:10px;
-  --r-md:16px;
-  --r-lg:24px;
+  --ai-100:#EEEAFB;
+  --r-sm:6px;
+  --r-md:10px;
+  --r-lg:16px;
   --r-pill:999px;
   --s-1:4px;
   --s-2:8px;
@@ -39,17 +33,17 @@
   --s-6:32px;
   --s-7:48px;
   --s-8:64px;
-  --sh-1:0 1px 2px rgba(27,33,64,.06),0 4px 12px rgba(27,33,64,.06);
-  --sh-pop:0 4px 0 rgba(27,33,64,.12);
-  --font-sans:'Nunito', system-ui, sans-serif;
-  --font-mono:'JetBrains Mono', ui-monospace, monospace;
+  --font-serif:'Fraunces', Georgia, serif;
+  --font-sans:'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+  --sh-1:0 1px 0 rgba(20,33,61,.06),0 2px 8px rgba(20,33,61,.05);
   --v-museos:#94502F;
   --v-justicia:#8E2C7A;
   --v-policia:#00728F;
   --v-educacion:#4F7A1F;
-  --accent:var(--coral);--accent-text:var(--coral-700);
+  --primary:var(--navy);--on-primary:var(--paper);--gold-text:var(--gold-700);
 }
-[data-theme="dark"]{--bg:#0B1530;--surface:#142350;--surface-2:#1C2E63;--line:#2A3D78;--ink:#F3F5FB;--muted:#A9B4D0;--gold:#F2C14E;--coral:#FF7A85;--blue:#7C9BFF;--success:#3CC7B4;--error:#FF8A80;--ai:#B3A2FF;--coral-700:#FF7A85;--blue-700:#7C9BFF;--gold-700:#F2C14E;--v-museos:#E7A07C;--v-justicia:#E58BD3;--v-policia:#4FC3E0;--v-educacion:#A7D46B;}
+[data-theme="dark"]{--bg:#0F1728;--surface:#18233A;--surface-2:#22304B;--line:#33425F;--ink:#F4F1EA;--muted:#B9BCC8;--subtle:#9A9EAE;--gold:#E3B341;--success:#4CC2B0;--error:#FF8F84;--warning:#E8B160;--ai:#B7A6FF;--primary:#F4F1EA;--on-primary:#14213D;--gold-text:#E3B341;--gold-100:#3A3220;--success-100:#123A37;--error-100:#45201E;--warning-100:#3E2E14;--ai-100:#2A2550;--surface-2:#22304B;--v-museos:#E7A07C;--v-justicia:#E58BD3;--v-policia:#4FC3E0;--v-educacion:#A7D46B;}
 [data-vertical="museos"]{--accent-v:var(--v-museos);}
 [data-vertical="justicia"]{--accent-v:var(--v-justicia);}
 [data-vertical="policia"]{--accent-v:var(--v-policia);}
